@@ -2,7 +2,7 @@ import logging
 import os
 import sys
 from crawler import Crawler
-from globals import LINKEDIN_URL, LOG_NAME
+from globals import LINKEDIN_URL, LOG_NAME, LOG_FILE_PATH
 from datetime import datetime
 from logging.handlers import RotatingFileHandler
 
@@ -31,7 +31,7 @@ def main():
 def initialize():
     
     #Create Log folder
-    log_dir = 'Log'
+    log_dir = LOG_FILE_PATH + 'Log'
     if not os.path.isdir(log_dir):
         os.mkdir(log_dir)
     
