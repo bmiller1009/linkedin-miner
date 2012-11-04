@@ -1,73 +1,27 @@
 import logging
-import os
-import sys
 from crawler import Crawler
-from globals import LINKEDIN_URL, LOG_NAME, LOG_FILE_PATH
-from datetime import datetime
-from logging.handlers import RotatingFileHandler
+from globals import LINKEDIN_URL, LOG_NAME
+from logger import Log
 
 #Sample Driver class to run the crawler
 def main():
-   
-    initialize()
-
+    
+    Log.initialize()
+    
     logger = logging.getLogger(LOG_NAME)
+
+    logger.info("Begin Scraping...")
+    main_url = '{0}wvmx/profile'.format(LINKEDIN_URL)
     
     try:
-        
-        logger.info("Begin Scraping...")
-        main_url = LINKEDIN_URL + 'wvmx/profile'
         crawler = Crawler() 
-        crawler.post(main_url, None)		
-    
-    except:
-        logger.error(sys.exc_info()[0])
-        raise
-    
-    finally:
+    except IOError as exc:
+        raise IOError("Construction of Crawler object failed due to a " + \
+                      "problem with the cookie file", exc.strerror)
+    else:
+        html = crawler.post(main_url)    
+        crawler.save_contacts(html)
         logger.info("Scraping Complete")
-
-#Initialize the log
-def initialize():
-    
-    #Create Log folder
-    log_dir = LOG_FILE_PATH + 'Log'
-    if not os.path.isdir(log_dir):
-        os.mkdir(log_dir)
-    
-    #Create folder for this particular scrape 
-    today = datetime.today()
-    
-    format_time = lambda time_element: len(str(time_element)) == 1 and '0' + str(time_element) or str(time_element)
-                                            
-    #Folder formatting
-    hour = format_time(today.hour)
-    minute = format_time(today.minute)
-    second = format_time(today.second)
-
-    folder_name = 'DailyScrape_' + str(today.month) + '.' + str(today.day) + '.' + str(today.year) + '_' + hour + '.' + minute + '.' + second
-                                                                                                                
-    #scrape directory run
-    scrape_dir = log_dir + '/' + folder_name
-    if not os.path.isdir(scrape_dir):
-        os.mkdir(scrape_dir)
-    
-    log = logging.getLogger(LOG_NAME)
-    log.setLevel(logging.DEBUG)
-
-    log_formatter = logging.Formatter("%(asctime)s - %(levelname)s :: %(message)s")
-
-    #Set up text logger
-    txt_handler = RotatingFileHandler(log_dir +'/' + folder_name + '/' + 'Log.txt', backupCount=5)
-    txt_handler.setFormatter(log_formatter)
-    log.addHandler(txt_handler)
-
-    #Set up screen logger
-    console_handler = logging.StreamHandler()
-    console_handler.setFormatter(log_formatter)
-    log.addHandler(console_handler)
-    
-    log.info("Logger initialized.")
 
 if __name__ == "__main__":
         main()
