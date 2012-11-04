@@ -1,2 +1,3 @@
+#Added globals.py, mostly consists of db log in data and log files
 *.pyc
 globals.py
