@@ -14,7 +14,7 @@ start harvesting that data moving forward.  The application runs in approximatel
 cron and that seems to be more than adequate for the amount of attention my profile tends receive on a daily basis.
 
 #####Doesn't LinkedIn have an API which can access this data?
-As of the writing of this README file in November 2011, to my knowledge, LinkedIn has not opened up this data to be pulled through their API.  My guess is that is
+As of the writing of this README file in November 2012, to my knowledge, LinkedIn has not opened up this data to be pulled through their API.  My guess is that is
 because one of the features they offer in the premium paid account is the full history of everyone who has ever viewed you profile.
 
 #####What applications do I need to run this?
