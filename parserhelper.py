@@ -5,8 +5,8 @@ class ParserHelper:
     
     @staticmethod
     #Returns the first match of a regular expression
-    def regex_return_first_match(html, pattern):
-        
+    def match_first_pattern(html, pattern):
+
         r = re.search(pattern, html)
 
         if r:
@@ -16,24 +16,30 @@ class ParserHelper:
 
     @staticmethod
     #Gets the text between tags.
-    def get_text_between_tags(tag):
+    def extract_tag_text(tag):
+            
+        start_tag_idx = tag.index('>')
+        str_len = tag[start_tag_idx + 1:].index('<')
 
-        clean_tag = ParserHelper.clean_data(tag)
-        start_tag = clean_tag.index('>')
-        final_string = ''
-
-        for c in clean_tag[start_tag + 1:]:
-            if c == '<':
-                break
-
-            final_string += c
-
-        return ParserHelper.clean_data(final_string)
+        tag_text = ''.join(c for c in tag[start_tag_idx + 1:start_tag_idx + str_len + 1])
+        
+        return ParserHelper.clean_data(tag_text)
     
     @staticmethod
-    #Removes unwanted characters from the html string
+    #Loops through all of the contacts found in the requested html text
+    def get_contacts(html, pattern):
+        
+        html = html.replace("\"","'")
+        match_strings = []
+        
+        for match in re.finditer(pattern, html):
+            match_strings.append(html[match.start():match.end()])
+        
+        return match_strings
+    
+    @staticmethod
     def clean_data(data):
         data = data.strip()
         data = data.replace("amp;", '')
-
+    
         return data
