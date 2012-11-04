@@ -108,8 +108,8 @@ class IdentTagParser(TagParser):
         TagParser.entry_record.entry_name = self.name(TagParser)
         TagParser.entry_record.profile_url = self.profile_url(TagParser)
         TagParser.entry_record.job_title = self.job_title(TagParser).replace("'", "")
-        TagParser.entry_record.location = self.location(TagParser).replace("'", "")
-        TagParser.entry_record.region = self.industry(TagParser).replace("'", "")
+        TagParser.entry_record.location = self.extract_metric("location", TagParser).replace("'", "")
+        TagParser.entry_record.region = self.extract_metric("industry", TagParser).replace("'", "")
         TagParser.entry_record.semi_known_main_entry_id = self.semi_known_id
         TagParser.entry_record.shares_groups = self.shares_groups(TagParser)
         TagParser.entry_record.shares_connections = self.shares_connections(TagParser)
@@ -146,28 +146,20 @@ class IdentTagParser(TagParser):
         title_index = tag.index(title_string)
         
         return url + ParserHelper.clean_data(tag[start_index:title_index])
-
+        
     #Gets the entry job title
     def job_title(self, TagParser):
         
         pattern = "<dd class='title'>.*</dd>"
         tag = ParserHelper.match_first_pattern(TagParser.html, pattern)
         return ParserHelper.extract_tag_text(tag)
-
-    #Gets the entry location
-    def location(self, TagParser):
-        
-        pattern = "<span class='location'>.*</span>"
+    
+    #Gets location and industry of contact
+    def extract_metric(self, pattern_value, TagParser):
+        pattern = "<span class='{0}'>.*</span>".format(pattern_value)
         tag = ParserHelper.match_first_pattern(TagParser.html, pattern)
         return ParserHelper.extract_tag_text(tag)
-
-    #Gets the entry industry
-    def industry(self, TagParser):
-        
-        pattern = "<span class='industry'>.*</span>"
-        tag = ParserHelper.match_first_pattern(TagParser.html, pattern)
-        return ParserHelper.extract_tag_text(tag)
-
+    
     #Gets the entry shares groups
     def shares_groups(self, TagParser):
         if TagParser.html.find("<div class='shared-groups'>") != -1:
