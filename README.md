@@ -27,9 +27,9 @@ http://dev.mysql.com/downloads/
 #####How do I refresh the Cookie?
 There's a few ways to do it...since I'm running the application on a headless Linux server, my options were fairly limited.  Here was my solution:
 
-1) I extracted the entire contents of my LinkedIn cookie to a file (ulimately this file is referenced in the app.config).  This only needs to be done once.
-2) I generate a new jsession_id through wget
-3) I generate a new leo_auth_token using lynx.  Essentially i created a login script to LinkedIn and persisted/extracted the value
-4) Once I have the two values, I perform a text replace on my cookie with the newly generated values.  This guarantees that I won't ever log in
+1. I extracted the entire contents of my LinkedIn cookie to a file (ulimately this file is referenced in the app.config).  This only needs to be done once.
+2. I generate a new jsession_id through wget
+3. I generate a new leo_auth_token using lynx.  Essentially i created a login script to LinkedIn and persisted/extracted the value
+4. Once I have the two values, I perform a text replace on my cookie with the newly generated values.  This guarantees that I won't ever log in
 with stale credentials.  You can take a look in the bash script in my BashScript project.  PLEASE NOTE: The bash script included is for instructional purposes only and 
 should be used as a template for how to solve the problem.
