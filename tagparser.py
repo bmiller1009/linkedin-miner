@@ -1,6 +1,6 @@
 from entryrecord import EntryRecord
 from globals import LINKEDIN_URL
-from parserhelper import ParserHelper
+from parserhelper import ParserHelper as ph
 
 (Anon, Semiknown, Known) = range(1,4)
 
@@ -48,20 +48,20 @@ class SemiKnownTagParser(object):
     #Parses the semi-known description from a contact in the html list
     def get_description(self): 
 
-        tag = ParserHelper.match_first_pattern(self.html, self.REGEX)
-        return ParserHelper.extract_tag_text(tag)
+        tag = ph.match_first_pattern(self.html, self.REGEX)
+        return ph.extract_tag_text(tag)
 
     #Gets the semi known URL
     def get_url(self):
 
-        tag = ParserHelper.match_first_pattern(self.html, self.REGEX)
+        tag = ph.match_first_pattern(self.html, self.REGEX)
     
         start_index = tag.index("href='/")
         title_index = tag.index("trk=")
         
         #TODO:  Clean this up
         return LINKEDIN_URL + \
-            ParserHelper.clean_data(tag[start_index + 7:title_index])
+            ph.clean_data(tag[start_index + 7:title_index])
 
 #This class handles parsing logic for fully identified contacts
 class IdentTagParser(object):
@@ -90,15 +90,15 @@ class IdentTagParser(object):
     def name(self):
         
         pattern = " title='View profile'>.*</a>"
-        tag = ParserHelper.match_first_pattern(self.html, pattern)
-        return ParserHelper.extract_tag_text(tag)
+        tag = ph.match_first_pattern(self.html, pattern)
+        return ph.extract_tag_text(tag)
 
     #Gets the profile URL
     def profile_url(self):
         
         pattern = "<a href=(.*)/profile[^>]*>"
         url = "{0}profile/view?id=".format(LINKEDIN_URL)
-        tag = ParserHelper.match_first_pattern(self.html, pattern)
+        tag = ph.match_first_pattern(self.html, pattern)
 
         index_of_string = ''
         title_string = ''
@@ -115,20 +115,20 @@ class IdentTagParser(object):
         start_index = offset + tag.index(index_of_string)
         title_index = tag.index(title_string)
         
-        return url + ParserHelper.clean_data(tag[start_index:title_index])
+        return url + ph.clean_data(tag[start_index:title_index])
         
     #Gets the entry job title
     def job_title(self):
         
         pattern = "<dd class='title'>.*</dd>"
-        tag = ParserHelper.match_first_pattern(self.html, pattern)
-        return ParserHelper.extract_tag_text(tag)
+        tag = ph.match_first_pattern(self.html, pattern)
+        return ph.extract_tag_text(tag)
     
     #Gets location and industry of contact
     def extract_metric(self, pattern_value):
         pattern = "<span class='{0}'>.*</span>".format(pattern_value)
-        tag = ParserHelper.match_first_pattern(self.html, pattern)
-        return ParserHelper.extract_tag_text(tag)
+        tag = ph.match_first_pattern(self.html, pattern)
+        return ph.extract_tag_text(tag)
     
     #Gets the entry shares groups
     def shares_groups(self):
