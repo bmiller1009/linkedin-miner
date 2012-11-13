@@ -21,40 +21,40 @@ class AnonTagParser(object):
 class SemiKnownTagParser(object):
 
     def __init__(self, html):
-        self.id = 0
-        self.html = html
-        self.entry_record = EntryRecord()
-        self.REGEX = "<a href='/wvmx/profile/redherring?[^>]*>.*</a>"
+        self._id = 0
+        self._html = html
+        self._entry_record = EntryRecord()
+        self._REGEX = "<a href='/wvmx/profile/redherring?[^>]*>.*</a>"
 
     @property
     def main_entry_id(self):
-        return self.entry_record.entry_id
+        return self._entry_record.entry_id
 
     @property
     def semi_known_url(self):
-        return self.entry_record.profile_url
+        return self._entry_record.profile_url
 
     def save(self):
         
-        self.entry_record.entry_type_id = Semiknown
-        self.entry_record.entry_name = self.get_description()
-        self.entry_record.profile_url = self.get_url()
-        self.entry_record.semi_known_main_entry_id = 0
+        self._entry_record.entry_type_id = Semiknown
+        self._entry_record.entry_name = self._get_description()
+        self._entry_record.profile_url = self._get_url()
+        self._entry_record.semi_known_main_entry_id = 0
 
-        self.id = self.entry_record.save()
+        self.id = self._entry_record.save()
         
         return self.id
 
     #Parses the semi-known description from a contact in the html list
-    def get_description(self): 
+    def _get_description(self): 
 
-        tag = ph.match_first_pattern(self.html, self.REGEX)
+        tag = ph.match_first_pattern(self._html, self._REGEX)
         return ph.extract_tag_text(tag)
 
     #Gets the semi known URL
-    def get_url(self):
+    def _get_url(self):
 
-        tag = ph.match_first_pattern(self.html, self.REGEX)
+        tag = ph.match_first_pattern(self._html, self._REGEX)
     
         start_index = tag.index("href='/")
         title_index = tag.index("trk=")
@@ -67,38 +67,38 @@ class SemiKnownTagParser(object):
 class IdentTagParser(object):
 
     def __init__(self, html):
-        self.entry_record = EntryRecord()
-        self.html = html
-        self.semi_known_id = 0
+        self._entry_record = EntryRecord()
+        self._html = html
+        self._semi_known_id = 0
 
     #Parses the tag
     def save(self):
         
-        self.entry_record.entry_type_id = Known
-        self.entry_record.entry_name = self.name()
-        self.entry_record.profile_url = self.profile_url()
-        self.entry_record.job_title = self.job_title().replace("'", "")
-        self.entry_record.location = self.extract_metric("location").replace("'", "")
-        self.entry_record.region = self.extract_metric("industry").replace("'", "")
-        self.entry_record.semi_known_main_entry_id = self.semi_known_id
-        self.entry_record.shares_groups = self.shares_groups()
-        self.entry_record.shares_connections = self.shares_connections()
+        self._entry_record.entry_type_id = Known
+        self._entry_record.entry_name = self._name()
+        self._entry_record.profile_url = self._profile_url()
+        self._entry_record.job_title = self._job_title().replace("'", "")
+        self._entry_record.location = self._extract_metric("location").replace("'", "")
+        self._entry_record.region = self._extract_metric("industry").replace("'", "")
+        self._entry_record.semi_known_main_entry_id = self._semi_known_id
+        self._entry_record.shares_groups = self._shares_groups()
+        self._entry_record.shares_connections = self._shares_connections()
 
-        return self.entry_record.save()
+        return self._entry_record.save()
 
     #Gets the name of the entry
-    def name(self):
+    def _name(self):
         
         pattern = " title='View profile'>.*</a>"
-        tag = ph.match_first_pattern(self.html, pattern)
+        tag = ph.match_first_pattern(self._html, pattern)
         return ph.extract_tag_text(tag)
 
     #Gets the profile URL
-    def profile_url(self):
+    def _profile_url(self):
         
         pattern = "<a href=(.*)/profile[^>]*>"
         url = "{0}profile/view?id=".format(LINKEDIN_URL)
-        tag = ph.match_first_pattern(self.html, pattern)
+        tag = ph.match_first_pattern(self._html, pattern)
 
         index_of_string = ''
         title_string = ''
@@ -118,28 +118,28 @@ class IdentTagParser(object):
         return url + ph.clean_data(tag[start_index:title_index])
         
     #Gets the entry job title
-    def job_title(self):
+    def _job_title(self):
         
         pattern = "<dd class='title'>.*</dd>"
-        tag = ph.match_first_pattern(self.html, pattern)
+        tag = ph.match_first_pattern(self._html, pattern)
         return ph.extract_tag_text(tag)
     
     #Gets location and industry of contact
-    def extract_metric(self, pattern_value):
+    def _extract_metric(self, pattern_value):
         pattern = "<span class='{0}'>.*</span>".format(pattern_value)
-        tag = ph.match_first_pattern(self.html, pattern)
+        tag = ph.match_first_pattern(self._html, pattern)
         return ph.extract_tag_text(tag)
     
     #Gets the entry shares groups
-    def shares_groups(self):
-        if self.html.find("<div class='shared-groups'>") != -1:
+    def _shares_groups(self):
+        if self._html.find("<div class='shared-groups'>") != -1:
             return 1
         else:
             return 0
 
     #Gets the entry shares connections
-    def shares_connections(self):
-        if self.html.find("<div class='shared-connections'") != -1:
+    def _shares_connections(self):
+        if self._html.find("<div class='shared-connections'") != -1:
             return 1
         else:
             return 0
